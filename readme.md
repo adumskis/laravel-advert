@@ -1,4 +1,4 @@
-# Laravel Advert
+# Laravel Advert (with random order)
 Simple package that helps add advert to Laravel 5 websites. What is more it allows to see every advert clicks and views count for some statistics.
 
 ### Installation
@@ -72,7 +72,7 @@ It will return Advert object
 ```php
     {{ AdvMng::getHTML('type') }}
 ```
-It will take the that with lowest viewed_at parameter. getHTML method allow add second (bool) parameter and if it's true then it will not check if advert was already taken.
+getHTML method allows add second (bool) parameter and if it's true then it will show all advert objects otherwise it randomly shows only one.
 ```php
     {{ AdvMng::getHTML('type', true) }}
 ```
