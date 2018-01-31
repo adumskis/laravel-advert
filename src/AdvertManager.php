@@ -11,11 +11,6 @@ use Illuminate\Support\HtmlString;
 class AdvertManager {
 
     /**
-     * @var array
-     */
-    private $used = [];
-
-    /**
      * @var object;
      */
     private static $instance;
@@ -38,33 +33,31 @@ class AdvertManager {
      * @param bool $duplicate
      * @return HtmlString|string
      */
-    public function getHTML($type, $duplicate = false){
+    public function getHTML($type, $render_all = false){
         $advert_category = AdvertCategory::where('type', $type)->first();
         if(!$advert_category){
             return '';
         }
 
-        $advert = $advert_category
+        $adverts = $advert_category
             ->adverts()
             ->where('active', true)
-            ->where(function($query) use ($duplicate){
-                if(!$duplicate){
-                    $query->whereNotIn('id', $this->used);
-                }
-            })
-            ->active()
-            ->orderBy('viewed_at', 'ASC')
-            ->first();
-
-        if($advert){
+            ->inRandomOrder()->get();
+        
+        $html = '';
+        foreach($adverts as $advert){
             $advert->plusViews();
             $advert->updateLastViewed();
-            $this->used[$type][] = $advert->id;
-            $html = View::make('partials.advert', compact('advert'))->render();
-            return new HtmlString($html);
-        } else {
-            return '';
+
+            $html .= View::make('partials.advert', compact('advert'))->render();
+            $html .= '<br>';
+
+            if(!$render_all)
+                break;
         }
+
+        return $html;
     }
 
 }
+
