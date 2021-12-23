@@ -47,9 +47,9 @@ class AdvertManager {
         $advert = $advert_category
             ->adverts()
             ->where('active', true)
-            ->where(function($query) use ($duplicate){
-                if(!$duplicate){
-                    $query->whereNotIn('id', $this->used);
+            ->where(function($query) use ($duplicate, $type){
+                if(!$duplicate && !empty($this->used[$type])){
+                    $query->whereNotIn('id', $this->used[$type]);
                 }
             })
             ->active()
